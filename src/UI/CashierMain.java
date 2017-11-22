@@ -161,6 +161,15 @@ public class CashierMain extends CashierView{
 			es.runWindow();
 		});
 		
+		endOfDayB.setOnAction(e -> {
+			EndOfDayPrompt edp = new EndOfDayPrompt("Perform End of Day");
+			edp.runWindow();
+		});
+		
+		overridePriceB.setOnAction(e -> {
+			OverridePricePrompt opp = new OverridePricePrompt("Override Price");
+			opp.runWindow();
+		});
 	}
 
 	public Button getLogOutbutton(){
@@ -393,6 +402,24 @@ public class CashierMain extends CashierView{
 			resetStage();
 	}
 	
+	public double getCartCost() {
+		ObservableList<String> selected;
+		double totalPrice = 0;
+		if(WoRTab.getText().equals("WHOLE SALE")){
+			for(int x = 0; x<ongoingWTable.getRawTable().getItems().size(); x++){
+				selected = ongoingWTable.getRawTable().getItems().get(x);
+				totalPrice += Double.parseDouble(selected.get(4).substring(1)) * Integer.parseInt(selected.get(3));
+			}
+    	}
+    	else {
+    		for(int x = 0; x<ongoingRTable.getRawTable().getItems().size(); x++){
+				selected = ongoingRTable.getRawTable().getItems().get(x);
+				totalPrice += Double.parseDouble(selected.get(4).substring(1)) * Integer.parseInt(selected.get(3));
+			}
+    	}
+		return totalPrice;
+	}
+	
 	private Button holdButton = new Button("HOLD"),
 				   COutButton = new Button("CHECKOUT"),
 				   clearCButton = new Button("CLEAR CART");
@@ -442,6 +469,17 @@ public class CashierMain extends CashierView{
 				ab.showBox();
 			}
 			changeCartCost();
+		});
+		
+		// checkout button
+		// GET CURRENT CUSTOMER ID
+		// to check if there is a user or not
+		// userID = 0 means no customer
+		COutButton.setOnAction(e -> {
+			double totalPrice = getCartCost();
+			int userID = 1;
+			CheckoutPrompt cp = new CheckoutPrompt("Checkout", totalPrice, userID);
+			cp.showBox();
 		});
 	}
 	
